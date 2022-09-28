@@ -1,11 +1,12 @@
-# 0x6b73746b
-The 0x6b73746b Programming Language
+<p align="center"><img width="150" src="0x6b73746b.png" alt="0x6b73746b"></p>
 
-Based on Robert Nystrom's https://craftinginterpreters.com/ and Lox Language
+# The 0x6b73746b Programming Language
+
+Based on Robert Nystrom's "Crafting Interpreters" book https://craftinginterpreters.com/ and the Lox Language
 
 ## Log
 
-This README is also a log of how the language is built and what I learn during this. It serves me as a notes to memorize new things better and be able to get back to them easier
+This README is also a log of how the language was built and what I learn during this. It serves me as a notes to memorize new things better and be able to get back to them easier
 
 **self-hosting** - it's when a compiles of language X is written in language X
 
@@ -23,7 +24,17 @@ steps of programming language compilation:
       1. attach it to AST as additional **attributes**
       2. store them in a separate table with i.e. variable names as keys
       3. transform AST to something different
+   
 everything up to this point is **frontend** of compiler; it's about lang
 then there's **middle end**, which is **intermediate representation** (IR) 
 last is **backend**, which is about something deeper but don't know it yet
-4. **intermediate representation** https://craftinginterpreters.com/a-map-of-the-territory.html#intermediate-representations TODO "There are a few well-established styles of IRs out there. Hit your search engine of choice and look for “control flow graph”, “static single-assignment”, “continuation-passing style”, and “three-address code”."
+
+4. **intermediate representation**
+   1. **control-flow graph** - representation of all possible paths in a program, shown on a graph
+   2. **static single assignment** - when a value is reassigned to a variable, a variable becomes a version of the original one, so in intermediate representation there will never be more than a single declaration and a single assignment to a given variable; **use-define chain** is a data structure storing uses and definitions of a variable; for static single assignment, use-define chain stores a single element
+   3. **continuation-passing style**
+   4. **three-address code**
+5. 
+
+## Author
+© Copyright [Jędrzej Paweł Maczan](https://maczan.pl/). Made in [Poland](https://en.wikipedia.org/wiki/Poland), 2022
