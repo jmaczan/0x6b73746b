@@ -62,10 +62,33 @@ types of compilers:
 4. **just-in-time compilation** - compile to bytecode to machine code when a program is loaded, so a compiler known to which architecture it should compile the code; examples: HotSpot JVM, JS (V8 engine), Microsoft Common Language Runtime; it has HotSpot in name because it has an optimization technique of finding important places in code which affect performance
 
 **compiling**: translate lang X to lang Y; transpiling is a compling as well
+
 **compiler**: translate code but not execute
+
 **interpreter**: execute code from source
 
 something might be both compiler and interpreter, i.e. JS (V8)
+
+types of memory management (a spectrum of it):
+1. **reference counting** - it's when a lang keeps track on amount of references and pointers to each variable 
+2. **garbage collection** - it's when program frees those parts of memory to which there are no references anymore; prevents **dangling pointers** - it's when you empty a memory but there are still some pointers to this memory and you try to get access to this memory (dereference a pointer) using this pointer; prevents **double-free** - trying to empty a memory that is already emptied - and some **memory leaks**
+
+types of operators:
+1. **infix** - between two operands, i.e. `a + b`
+2. **prefix** - before an operand, i.e. `!a`
+3. **postfix** - after an operand, i.e. `a!`
+
+**short-circuit evaluation** - when compiler omits evaluation of right side of `and` - `a and b` - when `a` is false or right side of `or` - `a or b` - when `a` is true
+
+**declaring a function** is when you assign a type to a function's name
+
+**defining a function** is when you add a body with code to a function
+
+**parameter of a function** - a formal parameter; variable declared as a parameter of function, i.e. `a` and `b` in `func(a, b) { do_something(); }`
+
+**argument of a function** - an actual parameter; value of a parameter which you use a inside function's body, i.e. value of `a`, like `5` or `"word"`
+
+**class vs prototype** - in classes we have inheritance; an instance refers to a class for a method; in prototypes there are only instances (objects) and their relation is that one can **delegate** to another to invoke a method
 
 ## Author
 Log is a bunch of my notes from Robert Nystrom's "Crafting Interpreters" book and a result of searching through web about compilers and trying to explain those things in a written form
