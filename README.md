@@ -55,6 +55,19 @@ here the backend starts
    2. (system) vm - emulator for a full hardware and operating system
 8. **runtime** - if code generation produces a machine code, operating system loads an executable; if code generation produces a bytecode, start virtual machine and load a program; things like garbage collector are in runtime; compiled langs might have copy of runtime inside of a compiled executable; langs with vm have runtime inside vm
 
+types of compilers:
+1. **single-pass compilers** - do all steps in a single pass, no going back with anything
+2. **tree-walk interpreters** - slow; program runs by traversing through an abstract syntax tree and evaluating nodes during a traversal
+3. **transpilers** - transcompiler; this is i.e. TypeScript I think; write frontend (scanner and parser) of X lang and compile it to a frontend of another Y lang; when X and Y are different, you might do more additional steps in between and generate Y code in code generation step
+4. **just-in-time compilation** - compile to bytecode to machine code when a program is loaded, so a compiler known to which architecture it should compile the code; examples: HotSpot JVM, JS (V8 engine), Microsoft Common Language Runtime; it has HotSpot in name because it has an optimization technique of finding important places in code which affect performance
+
+**compiling**: translate lang X to lang Y; transpiling is a compling as well
+**compiler**: translate code but not execute
+**interpreter**: execute code from source
+
+something might be both compiler and interpreter, i.e. JS (V8)
 
 ## Author
+Log is a bunch of my notes from Robert Nystrom's "Crafting Interpreters" book and a result of searching through web about compilers and trying to explain those things in a written form
+
 © Copyright [Jędrzej Paweł Maczan](https://maczan.pl/). Made in [Poland](https://en.wikipedia.org/wiki/Poland), 2022
