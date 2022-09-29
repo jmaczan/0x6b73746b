@@ -14,7 +14,9 @@ This README is also a log of how the language was built and what I learn during 
 
 language is too long word for this log, I replace it with lang since now
 
-steps of programming language compilation:
+compilation is a process of transforming code from complex form to basic structure
+
+steps of programming lang compilation:
 1. **scanning** (lexing, lexical analysis) - take text, output text divided on meaningful tokens like "function", "(", "'A'", "=" and so on; we get syntax as an output here
 2. **parsing** - organize tokens into a tree (AST; abstract syntax tree; parse tree), so it becomes a binary (?) tree with top operation as a root node and two (maybe more, not sure yet) children nodes; it is a structure of meaning of tokens; **parser** discovers **syntax errors**
 3. **static analysis** - gives a meaning to the syntax; 
@@ -26,7 +28,7 @@ steps of programming language compilation:
       3. transform AST to something different
    
 everything up to this point is **frontend** of compiler; it's about lang
-then there's **middle end**, which is **intermediate representation** (IR) 
+then there's **middle end**, which starts from **intermediate representation** (IR) 
 last is **backend**, which is about something deeper but don't know it yet
 
 4. **intermediate representation**
@@ -35,7 +37,24 @@ last is **backend**, which is about something deeper but don't know it yet
    3. **continuation-passing style** - it's a code written in a way that a function X has a callback (function Y) as a parameter; function X doesn't return a value Z; it calls function Y with parameter Z instead; "No procedure is allowed to return to its caller - ever." ~Matt Might https://matt.might.net/articles/by-example-continuation-passing-style/
    4. **three-address code** - `a := b [operation c]`, i.e. `a := 4 + c`; more complex code might be split into a sequence of multiple three-address code instructions; three-address code notation is easier to parse to assembly than a regular code
 5. **optimization** - it's possible to do optimization now, because a desired logic behind code is known; the open issue is how to implement this code as a low-level instructions (?)
-   1. **constant folding**
+   1. **constant propagation** - replacing all occurences of a constant with its value;
+   2. **constant folding** - when expression is a constant, evaluate them and replace all of their occurences with an evaluated value
+   3. **dead-code elimination** - removing a code that can't be reached by a program's execution and a code that is related to variables which are never used but are declared (dead variables)
+   4. **register allocation** - optimization by assigning variables to registers; not sure yet how 
+   5. **instruction selection** - ran before register allocation; I think it's choosing a machine instruction for a IR code
+   6. **instruction scheduling** - optimization for organizing the order of instructions;
+
+here the backend starts
+
+**intrinsic function** - a function that is known for a compiler ('built-in') and is used directly from compiler, instead of being linked to some library
+
+6. **code generation** - generate assembly code for a real processor or pseudo-assembly code for a virtual processor (VM?); real assembly code is executed by a physical chip; it means that the assembly code is dedicated to a specific processor architecture; a code generated for a virtual machine is called **bytecode** and this code is universal because the target architecture is a virtual one; if **code generation** produces **bytecode**, you can either write multiple compilers to transform bytecode to a platform specific code; bytecode is an intermediate representation here or create **virtual machine**
+
+7. **virtual machine** - it's either:
+   1. (lang || process) vm - a program written in X lang that emulates a hypothetical processor and might be ran on any platform which has X compiler installed
+   2. (system) vm - emulator for a full hardware and operating system
+8. **runtime** - if code generation produces a machine code, operating system loads an executable; if code generation produces a bytecode, start virtual machine and load a program; things like garbage collector are in runtime; compiled langs might have copy of runtime inside of a compiled executable; langs with vm have runtime inside vm
+
 
 ## Author
 © Copyright [Jędrzej Paweł Maczan](https://maczan.pl/). Made in [Poland](https://en.wikipedia.org/wiki/Poland), 2022
