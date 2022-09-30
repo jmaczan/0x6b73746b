@@ -1,3 +1,5 @@
+use std::{error::Error, ops::Sub};
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TokenType {
     LeftParen,
@@ -101,8 +103,31 @@ impl Lexer {
         self.current >= self.source.len() as u8
     }
 
-    fn scan_token() {
+    fn scan_token(&self) {
         // https://github.com/rust-lang/rust/blob/master/compiler/rustc_lexer/src/lib.rs
         // https://craftinginterpreters.com/scanning.html#recognizing-lexemes
+        let character = Self::advance(self);
+    }
+
+    fn advance(&self) -> char {
+        self.source
+            .as_str()
+            .chars()
+            .nth((&self.current + 1).into())
+            .unwrap()
+    }
+
+    fn add_empty_token(&self, token_type: TokenType) {
+        Self::add_token(self, token_type, None);
+    }
+
+    fn add_token(&self, token_type: TokenType, literal: Option<String>) {
+        let text = self.source.get(self.start.into()..self.current.into());
+        self.tokens.push(Token {
+            token_type,
+            lexeme: text,
+            literal,
+            line: self.line,
+        })
     }
 }
