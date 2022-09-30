@@ -90,6 +90,8 @@ types of operators:
 
 **class vs prototype** - in classes we have inheritance; an instance refers to a class for a method; in prototypes there are only instances (objects) and their relation is that one can **delegate** to another to invoke a method
 
+https://craftinginterpreters.com/a-tree-walk-interpreter.html
+
 ## Author
 Log is a bunch of my notes from Robert Nystrom's "Crafting Interpreters" book and a result of searching through web about compilers and trying to explain those things in a written form
 
