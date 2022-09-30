@@ -51,7 +51,7 @@ pub enum TokenType {
 struct Token {
     token_type: TokenType,
     lexeme: String,
-    literal: String,
+    literal: String, // originally Object
     line: u8,
 }
 
@@ -65,6 +65,9 @@ impl Token {
 struct Lexer {
     source: String,
     tokens: Vec<Token>,
+    start: u8,
+    current: u8,
+    line: u8,
 }
 
 impl Lexer {
@@ -72,6 +75,34 @@ impl Lexer {
         Self {
             source,
             tokens: Vec::new(),
+            start: 0,
+            current: 0,
+            line: 1,
         }
+    }
+
+    pub fn scan_tokens(&self) -> &Vec<Token> {
+        while !Self::is_at_end(self) {
+            self.start = self.current;
+            scan_token();
+        }
+
+        self.tokens.push(Token {
+            token_type: TokenType::Eof,
+            lexeme: "".to_owned(),
+            literal: "".to_owned(), // originally Null
+            line: self.line,
+        });
+
+        &self.tokens
+    }
+
+    fn is_at_end(&self) -> bool {
+        self.current >= self.source.len() as u8
+    }
+
+    fn scan_token() {
+        // https://github.com/rust-lang/rust/blob/master/compiler/rustc_lexer/src/lib.rs
+        // https://craftinginterpreters.com/scanning.html#recognizing-lexemes
     }
 }
