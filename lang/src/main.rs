@@ -2,6 +2,8 @@ use std::env;
 use std::fs::read_to_string;
 use std::io::{stdin, stdout, Write};
 
+pub mod lexical_analysis;
+
 fn main() {
     let args: Vec<String> = env::args().collect();
 
@@ -18,7 +20,10 @@ fn run_file(path: &String) {
 }
 
 fn run(source: String) {
-    println!("{}", source);
+    let source_characters = source.chars();
+    source_characters.for_each(|character| {
+        println!("{:?}", character);
+    })
 }
 
 fn run_prompt() {
@@ -30,8 +35,17 @@ fn run_prompt() {
         reader.flush().unwrap();
 
         let mut line = String::new();
-        input.read_line(&mut line).unwrap();
-
-        run(line);
+        match input.read_line(&mut line) {
+            Ok(_) => run(line),
+            Err(_) => break,
+        }
     }
+}
+
+fn error(line: u8, message: String) {
+    report(line, "".to_owned(), message);
+}
+
+fn report(line: u8, source: String, message: String) {
+    println!("[line: {}] Error {}: {}", line, source, message);
 }
