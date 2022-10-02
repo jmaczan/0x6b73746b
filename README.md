@@ -90,7 +90,7 @@ types of operators:
 
 **class vs prototype** - in classes we have inheritance; an instance refers to a class for a method; in prototypes there are only instances (objects) and their relation is that one can **delegate** to another to invoke a method
 
-https://craftinginterpreters.com/a-tree-walk-interpreter.html
+**maximal munch** - a principle saying that when you decide about how to parse a lexeme, you should pick the one that matches as many characters as possible; it's the best match in other words, where 'best' is when more characters fit to the template than to others
 
 ## Author
 Log is a bunch of my notes from Robert Nystrom's "Crafting Interpreters" book and a result of searching through web about compilers and trying to explain those things in a written form

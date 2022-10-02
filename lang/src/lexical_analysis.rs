@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::error;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -46,7 +48,7 @@ pub enum TokenType {
     True,
     Var,
     White,
-
+    While,
     Eof,
 }
 
@@ -71,6 +73,7 @@ struct Lexer {
     start: u8,
     current: u8,
     line: u8,
+    keywords: HashMap<&'static str, TokenType>, // not sure about &'static, maybe it needs to be <String, TokenType>
 }
 
 impl Lexer {
@@ -81,6 +84,24 @@ impl Lexer {
             start: 0,
             current: 0,
             line: 1,
+            keywords: HashMap::from([
+                ("and", TokenType::And),
+                ("class", TokenType::Class),
+                ("else", TokenType::Else),
+                ("false", TokenType::False),
+                ("for", TokenType::For),
+                ("fun", TokenType::Fun),
+                ("if", TokenType::If),
+                ("nil", TokenType::Nil),
+                ("or", TokenType::Or),
+                ("print", TokenType::Print),
+                ("return", TokenType::Return),
+                ("super", TokenType::Super),
+                ("this", TokenType::This),
+                ("true", TokenType::True),
+                ("var", TokenType::Var),
+                ("while", TokenType::While),
+            ]),
         }
     }
 
@@ -110,8 +131,6 @@ impl Lexer {
     }
 
     fn scan_token(&mut self) {
-        // https://github.com/rust-lang/rust/blob/master/compiler/rustc_lexer/src/lib.rs
-        // https://craftinginterpreters.com/scanning.html#recognizing-lexemes
         let character = Self::advance(self);
         match character {
             '(' => Self::add_empty_token(self, TokenType::LeftParen),
@@ -302,5 +321,34 @@ impl Lexer {
             .chars()
             .nth((self.current + 1).into())
             .unwrap()
+    }
+
+    fn is_alpha(character: char) -> bool {
+        match character {
+            'a'..='z' | 'A'..='Z' | '_' => true,
+            _ => false,
+        }
+    }
+
+    fn is_alphanumeric(character: char) -> bool {
+        Self::is_alpha(character) || Self::is_digit(character)
+    }
+
+    fn identifier(&mut self) {
+        while Self::is_alphanumeric(self.peek()) {
+            self.advance();
+        }
+
+        let text = match self.source.get(self.start.into()..self.current.into()) {
+            Some(text) => text,
+            None => "", // handle it better way; it's still an error situation
+        };
+
+        let token_type = match self.keywords.get(text) {
+            Some(token_type) => *token_type,
+            None => TokenType::Identifier,
+        };
+
+        Self::add_empty_token(self, token_type);
     }
 }
