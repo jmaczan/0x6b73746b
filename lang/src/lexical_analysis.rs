@@ -88,14 +88,18 @@ impl Lexer {
             Self::scan_token(self);
         }
 
+        self.append_eof_token();
+
+        &self.tokens
+    }
+
+    fn append_eof_token(&mut self) {
         self.tokens.push(Token {
             token_type: TokenType::Eof,
             lexeme: "".to_owned(),
             literal: "".to_owned(), // originally Null
             line: self.line,
         });
-
-        &self.tokens
     }
 
     fn is_at_end(&self) -> bool {
@@ -155,6 +159,7 @@ impl Lexer {
                 }
             }
             ' ' | '\r' | '\t' => {}
+            '"' => Self::string(self),
             '\n' => {
                 self.line += 1;
             }
@@ -185,7 +190,7 @@ impl Lexer {
                 Some(text) => text.to_owned(),
                 None => "".to_owned(), // maybe it should fail in more explicit manner
             },
-            literal: literal.unwrap_or_default(),
+            literal: literal.unwrap_or_default().to_owned(),
             line: self.line,
         })
     }
@@ -218,5 +223,28 @@ impl Lexer {
             .chars()
             .nth(self.current.into())
             .unwrap()
+    }
+
+    fn string(&mut self) {
+        while self.peek() != '"' && !self.is_at_end() {
+            if self.peek() == '\n' {
+                self.line += 1;
+            }
+            self.advance();
+        }
+
+        if self.is_at_end() {
+            error(self.line, "Unterminated string.".to_owned());
+            return;
+        }
+
+        self.advance();
+
+        let text = match self.source.get(self.start.into()..self.current.into()) {
+            Some(text) => text.to_owned(),
+            None => "".to_owned(), // handle it better way; it's still an error situation
+        };
+
+        self.add_token(TokenType::String, Some(text));
     }
 }
