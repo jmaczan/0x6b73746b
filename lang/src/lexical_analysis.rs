@@ -1,4 +1,6 @@
-use std::{error::Error, ops::Sub};
+use std::{error::Error, ops::Sub, str::FromStr};
+
+use crate::error;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TokenType {
@@ -83,10 +85,10 @@ impl Lexer {
         }
     }
 
-    pub fn scan_tokens(&self) -> &Vec<Token> {
+    pub fn scan_tokens(&mut self) -> &Vec<Token> {
         while !Self::is_at_end(self) {
             self.start = self.current;
-            scan_token();
+            Self::scan_token(self);
         }
 
         self.tokens.push(Token {
@@ -103,10 +105,28 @@ impl Lexer {
         self.current >= self.source.len() as u8
     }
 
-    fn scan_token(&self) {
+    fn scan_token(&mut self) {
         // https://github.com/rust-lang/rust/blob/master/compiler/rustc_lexer/src/lib.rs
         // https://craftinginterpreters.com/scanning.html#recognizing-lexemes
         let character = Self::advance(self);
+        let token = match character {
+            '(' => TokenType::LeftParen,
+            ')' => TokenType::RightParen,
+            '{' => TokenType::LeftBrace,
+            '}' => TokenType::RightBrace,
+            ',' => TokenType::Comma,
+            '.' => TokenType::Dot,
+            '-' => TokenType::Minus,
+            '+' => TokenType::Plus,
+            ';' => TokenType::Semicolon,
+            '*' => TokenType::Star,
+            _ => {
+                error(self.line, String::from("Unexpected character"));
+                panic!(); // would be best to not panic and keep scanning - https://craftinginterpreters.com/scanning.html#lexical-errors
+            }
+        };
+
+        Self::add_empty_token(self, token);
     }
 
     fn advance(&self) -> char {
@@ -117,16 +137,20 @@ impl Lexer {
             .unwrap()
     }
 
-    fn add_empty_token(&self, token_type: TokenType) {
+    fn add_empty_token(&mut self, token_type: TokenType) {
         Self::add_token(self, token_type, None);
     }
 
-    fn add_token(&self, token_type: TokenType, literal: Option<String>) {
-        let text = self.source.get(self.start.into()..self.current.into());
+    fn add_token(&mut self, token_type: TokenType, literal: Option<String>) {
+        let text: Option<&str> = self.source.get(self.start.into()..self.current.into());
+
         self.tokens.push(Token {
             token_type,
-            lexeme: text,
-            literal,
+            lexeme: match text {
+                Some(text) => text.to_owned(),
+                None => "".to_owned(), // maybe it should fail in more explicit manner
+            },
+            literal: literal.unwrap_or_default(),
             line: self.line,
         })
     }

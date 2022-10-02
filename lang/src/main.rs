@@ -42,7 +42,7 @@ fn run_prompt() {
     }
 }
 
-fn error(line: u8, message: String) {
+pub fn error(line: u8, message: String) {
     report(line, "".to_owned(), message);
 }
 
