@@ -53,7 +53,9 @@ pub enum TokenType {
 struct Token {
     token_type: TokenType,
     lexeme: String,
-    literal: String, // originally it was Object; likely that this type should be changed to something else once I figure out what it exactly is
+    literal: String, // originally it was Object; likely that this type should be changed to something else once I figure out what it exactly is;
+    // turns out it needs to be String for some literals and i32 for others;
+    numeric_literal: i32,
     line: u8,
 }
 
@@ -98,6 +100,7 @@ impl Lexer {
             token_type: TokenType::Eof,
             lexeme: "".to_owned(),
             literal: "".to_owned(), // originally Null
+            numeric_literal: 0,     // a stub value
             line: self.line,
         });
     }
@@ -163,6 +166,9 @@ impl Lexer {
             '\n' => {
                 self.line += 1;
             }
+            '0'..='9' => {
+                Self::number(self);
+            }
             _ => {
                 error(self.line, String::from("Unexpected character"));
             }
@@ -178,10 +184,15 @@ impl Lexer {
     }
 
     fn add_empty_token(&mut self, token_type: TokenType) {
-        Self::add_token(self, token_type, None);
+        Self::add_token(self, token_type, None, None);
     }
 
-    fn add_token(&mut self, token_type: TokenType, literal: Option<String>) {
+    fn add_token(
+        &mut self,
+        token_type: TokenType,
+        literal: Option<String>,
+        numeric_literal: Option<i32>,
+    ) {
         let text: Option<&str> = self.source.get(self.start.into()..self.current.into());
 
         self.tokens.push(Token {
@@ -190,7 +201,8 @@ impl Lexer {
                 Some(text) => text.to_owned(),
                 None => "".to_owned(), // maybe it should fail in more explicit manner
             },
-            literal: literal.unwrap_or_default().to_owned(),
+            literal: literal.unwrap_or_default().to_owned(), // it makes that literal always have a value; maybe it's not desired behavior
+            numeric_literal: numeric_literal.unwrap_or_default().to_owned(), // it makes that numeric_literal always have a value; maybe it's not desired behavior
             line: self.line,
         })
     }
@@ -245,6 +257,50 @@ impl Lexer {
             None => "".to_owned(), // handle it better way; it's still an error situation
         };
 
-        self.add_token(TokenType::String, Some(text));
+        self.add_token(TokenType::String, Some(text), None);
+    }
+
+    fn number(&mut self) {
+        while Self::is_digit(self.peek()) {
+            self.advance();
+        }
+
+        if self.peek() == '.' && Self::is_digit(self.peek_next()) {
+            self.advance();
+
+            while Self::is_digit(self.peek()) {
+                self.advance();
+            }
+        }
+
+        let number = match self.source.get(self.start.into()..self.current.into()) {
+            Some(text) => text.to_owned(),
+            None => "".to_owned(), // handle it better way; it's still an error situation
+        };
+
+        self.add_token(
+            TokenType::Number,
+            None,
+            Some(number.parse::<i32>().expect("Invalid number")), // handle a failure of parsing a number in better way which wouldn't stop a compiler
+        );
+    }
+
+    fn is_digit(character: char) -> bool {
+        match character {
+            '0'..='9' => true,
+            _ => false,
+        }
+    }
+
+    fn peek_next(&mut self) -> char {
+        if self.current + 1 >= self.source.len() as u8 {
+            return '\0';
+        }
+
+        self.source
+            .as_str()
+            .chars()
+            .nth((self.current + 1).into())
+            .unwrap()
     }
 }
