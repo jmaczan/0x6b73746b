@@ -2,7 +2,7 @@
 
 # The 0x6b73746b Programming Language
 
-Based on Robert Nystrom's "Crafting Interpreters" book https://craftinginterpreters.com/ and the Lox Language
+Based on Robert Nystrom's "Crafting Interpreters" book https://craftinginterpreters.com/ and his Lox Programming Language
 
 ## Log
 

@@ -1,5 +1,3 @@
-use std::{error::Error, ops::Sub, str::FromStr};
-
 use crate::error;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -55,14 +53,13 @@ pub enum TokenType {
 struct Token {
     token_type: TokenType,
     lexeme: String,
-    literal: String, // originally Object
+    literal: String, // originally it was Object; likely that this type should be changed to something else once I figure out what it exactly is
     line: u8,
 }
 
 impl Token {
     pub fn to_string(&self) -> String {
-        //self.token_type +
-        self.lexeme.to_owned() + " " + &self.literal.to_owned()
+        self.lexeme.to_owned() + " " + &self.literal.to_owned() // it should start with "self.token_type +" but I didn't manage to parse TokenType to String yet
     }
 }
 
@@ -109,24 +106,62 @@ impl Lexer {
         // https://github.com/rust-lang/rust/blob/master/compiler/rustc_lexer/src/lib.rs
         // https://craftinginterpreters.com/scanning.html#recognizing-lexemes
         let character = Self::advance(self);
-        let token = match character {
-            '(' => TokenType::LeftParen,
-            ')' => TokenType::RightParen,
-            '{' => TokenType::LeftBrace,
-            '}' => TokenType::RightBrace,
-            ',' => TokenType::Comma,
-            '.' => TokenType::Dot,
-            '-' => TokenType::Minus,
-            '+' => TokenType::Plus,
-            ';' => TokenType::Semicolon,
-            '*' => TokenType::Star,
+        match character {
+            '(' => Self::add_empty_token(self, TokenType::LeftParen),
+            ')' => Self::add_empty_token(self, TokenType::RightParen),
+            '{' => Self::add_empty_token(self, TokenType::LeftBrace),
+            '}' => Self::add_empty_token(self, TokenType::RightBrace),
+            ',' => Self::add_empty_token(self, TokenType::Comma),
+            '.' => Self::add_empty_token(self, TokenType::Dot),
+            '-' => Self::add_empty_token(self, TokenType::Minus),
+            '+' => Self::add_empty_token(self, TokenType::Plus),
+            ';' => Self::add_empty_token(self, TokenType::Semicolon),
+            '*' => Self::add_empty_token(self, TokenType::Star),
+            '!' => {
+                if Self::match_character(self, '=') {
+                    Self::add_empty_token(self, TokenType::BangEqual)
+                } else {
+                    Self::add_empty_token(self, TokenType::Bang)
+                }
+            }
+            '=' => {
+                if Self::match_character(self, '=') {
+                    Self::add_empty_token(self, TokenType::EqualEqual)
+                } else {
+                    Self::add_empty_token(self, TokenType::Equal)
+                }
+            }
+            '<' => {
+                if Self::match_character(self, '=') {
+                    Self::add_empty_token(self, TokenType::LessEqual)
+                } else {
+                    Self::add_empty_token(self, TokenType::Equal)
+                }
+            }
+            '>' => {
+                if Self::match_character(self, '=') {
+                    Self::add_empty_token(self, TokenType::GreaterEqual)
+                } else {
+                    Self::add_empty_token(self, TokenType::Equal)
+                }
+            }
+            '/' => {
+                if Self::match_character(self, '/') {
+                    while Self::peek(self) != '\n' && !self.is_at_end() {
+                        self.advance();
+                    }
+                } else {
+                    Self::add_empty_token(self, TokenType::Slash)
+                }
+            }
+            ' ' | '\r' | '\t' => {}
+            '\n' => {
+                self.line += 1;
+            }
             _ => {
                 error(self.line, String::from("Unexpected character"));
-                panic!(); // would be best to not panic and keep scanning - https://craftinginterpreters.com/scanning.html#lexical-errors
             }
         };
-
-        Self::add_empty_token(self, token);
     }
 
     fn advance(&self) -> char {
@@ -153,5 +188,35 @@ impl Lexer {
             literal: literal.unwrap_or_default(),
             line: self.line,
         })
+    }
+
+    fn match_character(&mut self, character: char) -> bool {
+        if self.is_at_end()
+            || self
+                .source
+                .as_str()
+                .chars()
+                .nth(self.current.into())
+                .unwrap()
+                != character
+        {
+            return false;
+        }
+
+        self.current += 1;
+
+        true
+    }
+
+    fn peek(&mut self) -> char {
+        if self.is_at_end() {
+            return '\0';
+        }
+
+        self.source
+            .as_str()
+            .chars()
+            .nth(self.current.into())
+            .unwrap()
     }
 }
