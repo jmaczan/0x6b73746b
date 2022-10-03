@@ -193,8 +193,11 @@ impl Lexer {
             '\n' => {
                 self.line += 1;
             }
-            '0'..='9' => {
+            character if Self::is_digit(character) => {
                 Self::number(self);
+            }
+            character if Self::is_alpha(character) => {
+                Self::identifier(self);
             }
             _ => {
                 error(self.line, String::from("Unexpected character"));
