@@ -58,7 +58,7 @@ pub struct Token {
     lexeme: String,
     literal: String, // originally it was Object; likely that this type should be changed to something else once I figure out what it exactly is;
     // turns out it needs to be String for some literals and i32 for others;
-    numeric_literal: i32,
+    numeric_literal: f32,
     line: u8,
 }
 
@@ -122,7 +122,7 @@ impl Lexer {
             token_type: TokenType::Eof,
             lexeme: "".to_owned(),
             literal: "".to_owned(), // originally Null
-            numeric_literal: 0,     // a stub value
+            numeric_literal: 0.0,     // a stub value
             line: self.line,
         });
     }
@@ -222,7 +222,7 @@ impl Lexer {
         &mut self,
         token_type: TokenType,
         literal: Option<String>,
-        numeric_literal: Option<i32>,
+        numeric_literal: Option<f32>,
     ) {
         let text: Option<&str> = self.source.get(self.start.into()..self.current.into());
 
@@ -312,7 +312,7 @@ impl Lexer {
         self.add_token(
             TokenType::Number,
             None,
-            Some(number.parse::<i32>().expect("Invalid number")), // handle a failure of parsing a number in better way which wouldn't stop a compiler
+            Some(number.parse::<f32>().expect("Invalid number")), // handle a failure of parsing a number in better way which wouldn't stop a compiler
         );
     }
 

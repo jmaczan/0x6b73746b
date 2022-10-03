@@ -8,7 +8,6 @@ pub mod lexical_analysis;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    println!("hello");
     match args.len() {
         2 => run_file(&args[1]),
         1 => run_prompt(),
