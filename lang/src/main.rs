@@ -2,11 +2,13 @@ use std::env;
 use std::fs::read_to_string;
 use std::io::{stdin, stdout, Write};
 
+use lexical_analysis::Lexer;
+
 pub mod lexical_analysis;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-
+    println!("hello");
     match args.len() {
         2 => run_file(&args[1]),
         1 => run_prompt(),
@@ -20,10 +22,9 @@ fn run_file(path: &String) {
 }
 
 fn run(source: String) {
-    let source_characters = source.chars();
-    source_characters.for_each(|character| {
-        println!("{:?}", character);
-    })
+    let mut lexer = Lexer::new(source);
+    lexer.scan_tokens();
+    println!("{:?}", lexer.tokens);
 }
 
 fn run_prompt() {

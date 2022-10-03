@@ -52,7 +52,8 @@ pub enum TokenType {
     Eof,
 }
 
-struct Token {
+#[derive(Debug)]
+pub struct Token {
     token_type: TokenType,
     lexeme: String,
     literal: String, // originally it was Object; likely that this type should be changed to something else once I figure out what it exactly is;
@@ -67,9 +68,9 @@ impl Token {
     }
 }
 
-struct Lexer {
+pub struct Lexer {
     source: String,
-    tokens: Vec<Token>,
+    pub tokens: Vec<Token>,
     start: u8,
     current: u8,
     line: u8,
@@ -128,6 +129,13 @@ impl Lexer {
 
     fn is_at_end(&self) -> bool {
         self.current >= self.source.len() as u8
+            || self
+                .source
+                .as_str()
+                .chars()
+                .nth((self.current).into())
+                .unwrap()
+                == '\0'
     }
 
     fn scan_token(&mut self) {
@@ -194,12 +202,16 @@ impl Lexer {
         };
     }
 
-    fn advance(&self) -> char {
-        self.source
+    fn advance(&mut self) -> char {
+        let next_character = self
+            .source
             .as_str()
             .chars()
-            .nth((&self.current + 1).into())
-            .unwrap()
+            .nth((self.current).into())
+            .unwrap_or_default();
+
+        self.current += 1;
+        next_character
     }
 
     fn add_empty_token(&mut self, token_type: TokenType) {
