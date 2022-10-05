@@ -2,9 +2,9 @@
 
 # The 0x6b73746b Programming Language
 
-Based on Robert Nystrom's "Crafting Interpreters" book https://craftinginterpreters.com/ and his Lox Programming Language
+Based on Robert Nystrom's "Crafting Interpreters" book https://craftinginterpreters.com/ and Lox Programming Language
 
-## Log
+## Notes
 
 This README is also a log of how the language was built and what I learn during this. It serves me as notes to memorize new things better and be able to get back to them easier
 
@@ -92,7 +92,25 @@ types of operators:
 
 **maximal munch** - a principle saying that when you decide about how to parse a lexeme, you should pick the one that matches as many characters as possible; it's the best match in other words, where 'best' is when more characters fit to the template than to others
 
+**postorder traversal** - it's kind of traversing a graph (i.e. tree); depth-first; do recursively traversal to the left subtree, then recursively to the right subtree; https://medium.com/data-structure-and-algorithms/binary-tree-post-order-traversal-9e7174b87cda
+
+in formal languages, which programming languages like this one belongs to, there are two (?) types of symbols. 
+1. **non-terminal symbols** - like variable; it can be replaced with some other change; a concept of digit is non-terminal, because it might take different terminal values (like 0, 1, 2, etc)
+2. **terminal symbols** - a defined value of variable, i.e. '0'; it can't be changed in something else, so that's why it's terminal
+
+**chomsky hierarchy** - hierarchy of formal grammars; it consists of: 
+1. **type-0** - "**recursively enumerable**"; turing machine; non-empty string of terminals and/or non-terminals produces possibly empty string of terminals and/or non-terminals
+2. **type-1** - "**context-sensitive**"; non-deterministic turing machine; 
+3. **type-2** - "**context-free**"; non-deterministic pushdown automation; non-terminal produces string of maybe empty terminals and/or non-terminals
+4. **type-3** - "**regular**"; finite state automaton; non-terminal produces terminal and non-terminal produces terminal with non-terminal
+
+https://craftinginterpreters.com/representing-code.html#rules-for-grammars
+
 ## Author
-Log is a bunch of my notes from Robert Nystrom's "Crafting Interpreters" book and a result of searching through web about compilers and trying to explain those things in a written form
+Notes is bunch of my notes from working through Robert Nystrom's "Crafting Interpreters" book and a result of searching through web to learn about programming languages and compilers and trying to explain those things in a written form
+
+Design of 0x6b73746b lang is derived from Lox lang and modified
+
+Implementation of 0x6b73746b lang is based on C and Java implementations of Lox lang and written from a scratch in Rust
 
 © Copyright [Jędrzej Paweł Maczan](https://maczan.pl/). Made in [Poland](https://en.wikipedia.org/wiki/Poland), 2022
