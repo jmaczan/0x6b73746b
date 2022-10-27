@@ -106,6 +106,14 @@ in formal languages, which programming languages like this one belongs to, there
 
 https://craftinginterpreters.com/representing-code.html#rules-for-grammars
 
+the language's grammar consists of
+1. **expression**, which may be literal, unary, binary or grouping
+2. **literal**, which may be any number, string, true, false or nil
+3. **grouping**, which is an expression inside parenthesis 
+4. **unary**, which consists of ! or - followed by an expression
+5. **binary**, which has infix operator, surrounded by expressions
+6. **operator**, which might be one of allowed operators for math and comparing
+
 ## Author
 Notes is bunch of my notes from working through Robert Nystrom's "Crafting Interpreters" book and a result of searching through web to learn about programming languages and compilers and trying to explain those things in a written form
 
