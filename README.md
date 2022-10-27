@@ -104,8 +104,6 @@ in formal languages, which programming languages like this one belongs to, there
 3. **type-2** - "**context-free**"; non-deterministic pushdown automation; non-terminal produces string of maybe empty terminals and/or non-terminals
 4. **type-3** - "**regular**"; finite state automaton; non-terminal produces terminal and non-terminal produces terminal with non-terminal
 
-https://craftinginterpreters.com/representing-code.html#rules-for-grammars
-
 the language's grammar consists of
 1. **expression**, which may be literal, unary, binary or grouping
 2. **literal**, which may be any number, string, true, false or nil

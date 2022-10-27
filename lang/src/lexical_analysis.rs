@@ -122,7 +122,7 @@ impl Lexer {
             token_type: TokenType::Eof,
             lexeme: "".to_owned(),
             literal: "".to_owned(), // originally Null
-            numeric_literal: 0.0,     // a stub value
+            numeric_literal: 0.0,   // a stub value
             line: self.line,
         });
     }
