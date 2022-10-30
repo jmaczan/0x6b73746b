@@ -3,16 +3,18 @@ use std::fs::read_to_string;
 use std::io::{stdin, stdout, Write};
 
 use lexical_analysis::Lexer;
+use crate::ast::generate_ast::generate_ast;
 
 pub mod lexical_analysis;
+pub mod ast;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     match args.len() {
+        0 | 1 => run_prompt(),
         2 => run_file(&args[1]),
-        1 => run_prompt(),
-        0 => run_prompt(),
-        _ => println!("Usage: 0x6b73746b [script]"),
+        3 => generate_ast(&args[2]),
+        _ => println!("Usage: 0x6b73746b [script]\nAST generation: 0x6b73746b ast [output directory]"),
     }
 }
 

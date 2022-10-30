@@ -1,7 +1,18 @@
-pub struct Expr {}
-
 pub struct Binary {
     left: Expr,
     operator: Token,
-    right: Expr
+    right: Expr,
+}
+
+pub struct Grouping {
+    expression: Expr,
+}
+
+pub struct Literal {
+    value: String,
+}
+
+pub struct Unary {
+    operator: Token,
+    right: Expr,
 }
