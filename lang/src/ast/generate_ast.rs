@@ -29,6 +29,14 @@ fn define_ast(output_directory: &str, file_name: &str, types: Vec<&str>) {
 
     let mut file = File::create(output_directory_path.join(file_name)).unwrap();
 
+    writeln!(
+        file,
+        "trait Accept {{
+fn accept(&self);
+}}\n"
+    )
+    .unwrap();
+
     for ast_type in types {
         let ast_type_components = ast_type.split("=").collect::<Vec<&str>>();
         let name: &str = ast_type_components.get(0).unwrap().trim();
@@ -43,5 +51,6 @@ fn define_type(file: &mut File, name: &str, fields: &str) {
     for field in fields.split(",").collect::<Vec<&str>>() {
         writeln!(file, "{field},").unwrap();
     }
+    writeln!(file, "").unwrap();
     writeln!(file, "}}\n").unwrap();
 }

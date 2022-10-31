@@ -1,3 +1,7 @@
+trait Accept {
+    fn accept(&self);
+}
+
 pub struct Binary {
     left: Expr,
     operator: Token,
