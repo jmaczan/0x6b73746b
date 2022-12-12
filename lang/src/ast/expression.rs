@@ -1,7 +1,9 @@
-trait Accept {
-    fn accept(&self);
+trait Visitor<R> {
+    fn visitBinaryExpr(&self, binary: Expr) -> R;
+    fn visitGroupingExpr(&self, grouping: Expr) -> R;
+    fn visitLiteralExpr(&self, literal: Expr) -> R;
+    fn visitUnaryExpr(&self, unary: Expr) -> R;
 }
-
 pub struct Binary {
     left: Expr,
     operator: Token,
@@ -20,3 +22,4 @@ pub struct Unary {
     operator: Token,
     right: Expr,
 }
+
