@@ -47,6 +47,11 @@ fn define_ast(output_directory: &str, file_name: &str, types: Vec<&str>) {
         let name: &str = ast_type_components.get(0).unwrap().trim();
         let fields: &str = ast_type_components.get(1).unwrap().trim();
         define_type(&mut file, name, fields);
+
+        let accept =
+            format!("impl Visitor for {name} {{\nfn accept<R>(&self, visitor: Visitor<R>) -> R {{return visitor.visit{name}Expr(&self);}}");
+        writeln!(file, "{accept}").unwrap();
+        writeln!(file, "}}\n").unwrap();
     }
 }
 
