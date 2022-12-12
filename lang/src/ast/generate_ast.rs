@@ -29,25 +29,18 @@ fn define_ast(output_directory: &str, file_name: &str, types: Vec<&str>) {
 
     let mut file = File::create(output_directory_path.join(file_name)).unwrap();
 
-    writeln!(
-        file,
-        "trait Visitor<R> {{"
-    )
-    .unwrap();
+    writeln!(file, "trait Visitor<R> {{").unwrap();
 
     for ast_type in &types {
         let ast_type_components = ast_type.split("=").collect::<Vec<&str>>();
         let name: &str = ast_type_components.get(0).unwrap().trim();
         let name_lowercase = name.to_lowercase();
-        let struct_signature = format!("    fn visit{name}Expr(&self, {name_lowercase}: Expr) -> R;");
+        let struct_signature =
+            format!("    fn visit{name}Expr(&self, {name_lowercase}: Expr) -> R;");
         writeln!(file, "{struct_signature}").unwrap();
     }
 
-    writeln!(
-        file,
-        "}}"
-    )
-    .unwrap();
+    writeln!(file, "}}").unwrap();
 
     for ast_type in types {
         let ast_type_components = ast_type.split("=").collect::<Vec<&str>>();

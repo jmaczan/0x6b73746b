@@ -22,4 +22,3 @@ pub struct Unary {
     operator: Token,
     right: Expr,
 }
-
