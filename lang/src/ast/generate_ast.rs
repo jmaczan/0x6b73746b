@@ -29,7 +29,7 @@ fn define_ast(output_directory: &str, file_name: &str, types: Vec<&str>) {
 
     let mut file = File::create(output_directory_path.join(file_name)).unwrap();
 
-    writeln!(file, "trait Expr<R> {{\n    fn accept<R>(&self, visitor: Visitor<R>) -> R;").unwrap();
+    writeln!(file, "trait Expr<R> {{\n    fn accept<R>(&self, visitor: Visitor<R>) -> R;\n}}\n").unwrap();
 
     writeln!(file, "trait Visitor<R> {{").unwrap();
 
