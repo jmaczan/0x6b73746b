@@ -29,6 +29,8 @@ fn define_ast(output_directory: &str, file_name: &str, types: Vec<&str>) {
 
     let mut file = File::create(output_directory_path.join(file_name)).unwrap();
 
+    writeln!(file, "trait Expr<R> {{\n    fn accept<R>(&self, visitor: Visitor<R>) -> R;").unwrap();
+
     writeln!(file, "trait Visitor<R> {{").unwrap();
 
     for ast_type in &types {
@@ -49,7 +51,7 @@ fn define_ast(output_directory: &str, file_name: &str, types: Vec<&str>) {
         define_type(&mut file, name, fields);
 
         let accept =
-            format!("impl Visitor for {name} {{\nfn accept<R>(&self, visitor: Visitor<R>) -> R {{return visitor.visit{name}Expr(&self);}}");
+            format!("impl Expr for {name} {{\nfn accept<R>(&self, visitor: Visitor<R>) -> R {{return visitor.visit{name}Expr(&self);}}");
         writeln!(file, "{accept}").unwrap();
         writeln!(file, "}}\n").unwrap();
     }

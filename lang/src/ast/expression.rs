@@ -4,6 +4,7 @@ trait Visitor<R> {
     fn visitLiteralExpr(&self, literal: Expr) -> R;
     fn visitUnaryExpr(&self, unary: Expr) -> R;
 }
+
 pub struct Binary {
     left: Expr,
     operator: Token,
