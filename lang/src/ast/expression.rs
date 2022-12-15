@@ -1,45 +1,53 @@
-trait Expr<R> {
-    fn accept<R>(&self, visitor: Visitor<R>) -> R;
+use crate::lexical_analysis::Token;
+pub trait Expr {
+    fn accept<R>(&self, visitor: dyn Visitor<R>) -> R;
 }
 
-trait Visitor<R> {
-    fn visitBinaryExpr(&self, binary: Expr) -> R;
-    fn visitGroupingExpr(&self, grouping: Expr) -> R;
-    fn visitLiteralExpr(&self, literal: Expr) -> R;
-    fn visitUnaryExpr(&self, unary: Expr) -> R;
+pub trait Visitor<R> {
+    fn visitBinaryExpr(&self, expr: Binary) -> R;
+    fn visitGroupingExpr(&self, expr: Grouping) -> R;
+    fn visitLiteralExpr(&self, expr: Literal) -> R;
+    fn visitUnaryExpr(&self, expr: Unary) -> R;
 }
 pub struct Binary {
-    left: Expr,
-    operator: Token,
-    right: Expr,
+    pub left: dyn Expr,
+    pub operator: Token,
+    pub right: dyn Expr,
 }
 
 impl Expr for Binary {
-fn accept<R>(&self, visitor: Visitor<R>) -> R {return visitor.visitBinaryExpr(&self);}
+    fn accept<R>(&self, visitor: dyn Visitor<R>) -> R {
+        return visitor.visitBinaryExpr(&self);
+    }
 }
 
 pub struct Grouping {
-    expression: Expr,
+    pub expression: dyn Expr,
 }
 
 impl Expr for Grouping {
-fn accept<R>(&self, visitor: Visitor<R>) -> R {return visitor.visitGroupingExpr(&self);}
+    fn accept<R>(&self, visitor: dyn Visitor<R>) -> R {
+        return visitor.visitGroupingExpr(&self);
+    }
 }
 
 pub struct Literal {
-    value: String,
+    pub value: String,
 }
 
 impl Expr for Literal {
-fn accept<R>(&self, visitor: Visitor<R>) -> R {return visitor.visitLiteralExpr(&self);}
+    fn accept<R>(&self, visitor: dyn Visitor<R>) -> R {
+        return visitor.visitLiteralExpr(&self);
+    }
 }
 
 pub struct Unary {
-    operator: Token,
-    right: Expr,
+    pub operator: Token,
+    pub right: dyn Expr,
 }
 
 impl Expr for Unary {
-fn accept<R>(&self, visitor: Visitor<R>) -> R {return visitor.visitUnaryExpr(&self);}
+    fn accept<R>(&self, visitor: dyn Visitor<R>) -> R {
+        return visitor.visitUnaryExpr(&self);
+    }
 }
-
