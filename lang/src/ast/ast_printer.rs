@@ -2,32 +2,35 @@ use super::expression::{Binary, Expr, Grouping, Literal, Unary, Visitor};
 
 struct AstPrinter {}
 
-impl Visitor<&str> for AstPrinter {
-    fn visitBinaryExpr(&self, expr: Binary) -> &str {
-        self.parenthesize(expr.operator.lexeme, vec![expr.left, expr.right])
+impl Visitor for AstPrinter {
+    fn visitBinaryExpr(&self, expr: &Binary) -> &str {
+        self.parenthesize(expr.operator.lexeme.as_str(), vec![expr.left, expr.right])
     }
 
-    fn visitGroupingExpr(&self, expr: Grouping) -> &str {
+    fn visitGroupingExpr(&self, expr: &Grouping) -> &str {
         self.parenthesize("group", vec![expr.expression])
     }
 
-    fn visitLiteralExpr(&self, expr: Literal) -> &str {
+    fn visitLiteralExpr(&self, expr: &Literal) -> &str {
         if expr.value == "" {
-            "nil"
+            return "nil"
         }
 
         expr.value.as_str()
     }
 
-    fn visitUnaryExpr(&self, expr: Unary) -> &str {
-        self.parenthesize(expr.operator.lexeme, vec![expr.right])
+    fn visitUnaryExpr(&self, expr: &Unary) -> &str {
+        self.parenthesize(expr.operator.lexeme.as_str(), vec![expr.right])
     }
 }
 
 impl AstPrinter {
-    pub fn print(&self, expr: dyn Expr) {
+    pub fn print(&self, expr: Box<dyn Expr>) -> &str {
         return expr.accept(self);
     }
 
-    fn parenthesize(&self, name: &str, exprs: Vec<Box<dyn Expr>>) -> &str {}
+    fn parenthesize(&self, name: &str, exprs: Vec<Box<dyn Expr>>) -> &str {
+        //TODO
+        ""
+    }
 }

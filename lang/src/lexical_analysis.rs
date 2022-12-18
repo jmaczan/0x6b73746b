@@ -55,7 +55,7 @@ pub enum TokenType {
 #[derive(Debug)]
 pub struct Token {
     token_type: TokenType,
-    lexeme: String,
+    pub lexeme: String,
     literal: String, // originally it was Object; likely that this type should be changed to something else once I figure out what it exactly is;
     // turns out it needs to be String for some literals and i32 for others;
     numeric_literal: f32,

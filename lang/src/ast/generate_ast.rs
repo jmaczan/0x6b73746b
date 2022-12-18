@@ -9,10 +9,10 @@ pub fn generate_ast(output_directory: &str) {
         output_directory,
         "expression.rs",
         Vec::from([
-            "Binary = left: dyn Expr, operator: Token, right: dyn Expr",
-            "Grouping = expression: dyn Expr",
+            "Binary = left: Box<dyn Expr>, operator: Token, right: Box<dyn Expr>",
+            "Grouping = expression: Box<dyn Expr>",
             "Literal = value: String", // originally it was Java Object, it needs changes in the future; see lexical_analysis -> struct Token.literal comments
-            "Unary = operator: Token, right: dyn Expr",
+            "Unary = operator: Token, right: Box<dyn Expr>",
         ]),
     );
 }
@@ -33,17 +33,17 @@ fn define_ast(output_directory: &str, file_name: &str, types: Vec<&str>) {
 
     writeln!(
         file,
-        "pub trait Expr {{\n    fn accept<R>(&self, visitor: dyn Visitor<R>) -> R;\n}}\n"
+        "pub trait Expr {{\n    fn accept(&self, visitor: Box<dyn Visitor>) -> &str;\n}}\n"
     )
     .unwrap();
 
-    writeln!(file, "pub trait Visitor<R> {{").unwrap();
+    writeln!(file, "pub trait Visitor {{").unwrap();
 
     for ast_type in &types {
         let ast_type_components = ast_type.split("=").collect::<Vec<&str>>();
         let name: &str = ast_type_components.get(0).unwrap().trim();
         let name_lowercase = name.to_lowercase();
-        let struct_signature = format!("    fn visit{name}Expr(&self, expr: {name}) -> R;");
+        let struct_signature = format!("    fn visit{name}Expr(&self, expr: &{name}) -> &str;");
         writeln!(file, "{struct_signature}").unwrap();
     }
 
@@ -56,7 +56,7 @@ fn define_ast(output_directory: &str, file_name: &str, types: Vec<&str>) {
         define_type(&mut file, name, fields);
 
         let accept =
-            format!("impl Expr for {name} {{\nfn accept<R>(&self, visitor: dyn Visitor<R>) -> R {{return visitor.visit{name}Expr(&self);}}");
+            format!("impl Expr for {name} {{\nfn accept(&self, visitor: Box<dyn Visitor>) -> &'static str {{return visitor.visit{name}Expr(&self);}}");
         writeln!(file, "{accept}").unwrap();
         writeln!(file, "}}\n").unwrap();
     }
