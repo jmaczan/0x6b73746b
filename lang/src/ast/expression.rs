@@ -1,14 +1,17 @@
 use crate::lexical_analysis::Token;
+
+use super::ast_printer::AstPrinter;
 pub trait Expr {
-    fn accept(&self, visitor: Box<dyn Visitor>) -> &'static str;
+    fn accept(&self, visitor: &AstPrinter) -> String;
 }
 
 pub trait Visitor {
-    fn visitBinaryExpr(&self, expr: &Binary) -> &str;
-    fn visitGroupingExpr(&self, expr: &Grouping) -> &str;
-    fn visitLiteralExpr(&self, expr: &Literal) -> &str;
-    fn visitUnaryExpr(&self, expr: &Unary) -> &str;
+    fn visitBinaryExpr(&self, expr: &Binary) -> String;
+    fn visitGroupingExpr(&self, expr: &Grouping) -> String;
+    fn visitLiteralExpr(&self, expr: &Literal) -> String;
+    fn visitUnaryExpr(&self, expr: &Unary) -> String;
 }
+
 pub struct Binary {
     pub left: Box<dyn Expr>,
     pub operator: Token,
@@ -16,7 +19,9 @@ pub struct Binary {
 }
 
 impl Expr for Binary {
-fn accept(&self, visitor: Box<dyn Visitor>) -> &'static str {return visitor.visitBinaryExpr(&self);}
+    fn accept(&self, visitor: &AstPrinter) -> String {
+        return visitor.visitBinaryExpr(&self).to_string();
+    }
 }
 
 pub struct Grouping {
@@ -24,7 +29,9 @@ pub struct Grouping {
 }
 
 impl Expr for Grouping {
-fn accept(&self, visitor: Box<dyn Visitor>) -> &'static str {return visitor.visitGroupingExpr(&self);}
+    fn accept(&self, visitor: &AstPrinter) -> String {
+        return visitor.visitGroupingExpr(&self).to_string();
+    }
 }
 
 pub struct Literal {
@@ -32,15 +39,18 @@ pub struct Literal {
 }
 
 impl Expr for Literal {
-fn accept(&self, visitor: Box<dyn Visitor>) -> &'static str {return visitor.visitLiteralExpr(&self);}
+    fn accept(&self, visitor: &AstPrinter) -> String {
+        return visitor.visitLiteralExpr(&self).to_string();
+    }
 }
 
 pub struct Unary {
     pub operator: Token,
-    pub right: Box<dyn Expr>, 
+    pub right: Box<dyn Expr>,
 }
 
 impl Expr for Unary {
-fn accept(&self, visitor: Box<dyn Visitor>) -> &'static str {return visitor.visitUnaryExpr(&self);}
+    fn accept(&self, visitor: &AstPrinter) -> String {
+        return visitor.visitUnaryExpr(&self).to_string();
+    }
 }
-

@@ -33,7 +33,7 @@ fn define_ast(output_directory: &str, file_name: &str, types: Vec<&str>) {
 
     writeln!(
         file,
-        "pub trait Expr {{\n    fn accept(&self, visitor: Box<dyn Visitor>) -> &str;\n}}\n"
+        "#[derive(Copy)]\npub trait Expr {{\n    fn accept(&self, visitor: Box<dyn Visitor>) -> &str;\n}}\n"
     )
     .unwrap();
 
@@ -42,7 +42,6 @@ fn define_ast(output_directory: &str, file_name: &str, types: Vec<&str>) {
     for ast_type in &types {
         let ast_type_components = ast_type.split("=").collect::<Vec<&str>>();
         let name: &str = ast_type_components.get(0).unwrap().trim();
-        let name_lowercase = name.to_lowercase();
         let struct_signature = format!("    fn visit{name}Expr(&self, expr: &{name}) -> &str;");
         writeln!(file, "{struct_signature}").unwrap();
     }
