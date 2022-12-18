@@ -29,11 +29,11 @@ fn define_ast(output_directory: &str, file_name: &str, types: Vec<&str>) {
 
     let mut file = File::create(output_directory_path.join(file_name)).unwrap();
 
-    writeln!(file, "use crate::lexical_analysis::Token;").unwrap();
+    writeln!(file, "use crate::lexical_analysis::Token;\nuse super::ast_printer::AstPrinter;").unwrap();
 
     writeln!(
         file,
-        "#[derive(Copy)]\npub trait Expr {{\n    fn accept(&self, visitor: Box<dyn Visitor>) -> &str;\n}}\n"
+        "pub trait Expr {{\n    fn accept(&self, visitor: &AstPrinter) -> String;\n}}\n"
     )
     .unwrap();
 
@@ -42,7 +42,8 @@ fn define_ast(output_directory: &str, file_name: &str, types: Vec<&str>) {
     for ast_type in &types {
         let ast_type_components = ast_type.split("=").collect::<Vec<&str>>();
         let name: &str = ast_type_components.get(0).unwrap().trim();
-        let struct_signature = format!("    fn visit{name}Expr(&self, expr: &{name}) -> &str;");
+        let name_lower_case = name.to_lowercase();
+        let struct_signature = format!("    fn visit_{name_lower_case}_expr(&self, expr: &{name}) -> String;");
         writeln!(file, "{struct_signature}").unwrap();
     }
 
@@ -51,11 +52,12 @@ fn define_ast(output_directory: &str, file_name: &str, types: Vec<&str>) {
     for ast_type in types {
         let ast_type_components = ast_type.split("=").collect::<Vec<&str>>();
         let name: &str = ast_type_components.get(0).unwrap().trim();
+        let name_lower_case = name.to_lowercase();
         let fields: &str = ast_type_components.get(1).unwrap().trim();
         define_type(&mut file, name, fields);
 
         let accept =
-            format!("impl Expr for {name} {{\nfn accept(&self, visitor: Box<dyn Visitor>) -> &'static str {{return visitor.visit{name}Expr(&self);}}");
+            format!("impl Expr for {name} {{\nfn accept(&self, visitor: &AstPrinter) -> String {{return visitor.visit_{name_lower_case}_expr(&self).to_string();}}");
         writeln!(file, "{accept}").unwrap();
         writeln!(file, "}}\n").unwrap();
     }

@@ -1,6 +1,5 @@
-use crate::lexical_analysis::Token;
-
 use super::ast_printer::AstPrinter;
+use crate::lexical_analysis::Token;
 pub trait Expr {
     fn accept(&self, visitor: &AstPrinter) -> String;
 }
@@ -11,7 +10,6 @@ pub trait Visitor {
     fn visit_literal_expr(&self, expr: &Literal) -> String;
     fn visit_unary_expr(&self, expr: &Unary) -> String;
 }
-
 pub struct Binary {
     pub left: Box<dyn Expr>,
     pub operator: Token,
