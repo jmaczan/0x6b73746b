@@ -34,6 +34,11 @@ impl AstPrinter {
 
     fn parenthesize(&self, name: String, exprs: Vec<&Box<dyn Expr>>) -> String {
         //TODO
-        "".to_string()
+        let mut parenthesized = "(".to_string() + &name;
+        for expr in &exprs {
+            parenthesized = parenthesized + " " + &expr.accept(self).to_string();
+        }
+        parenthesized = parenthesized + &")".to_string();
+        return parenthesized;
     }
 }
