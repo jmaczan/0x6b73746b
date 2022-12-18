@@ -6,10 +6,10 @@ pub trait Expr {
 }
 
 pub trait Visitor {
-    fn visitBinaryExpr(&self, expr: &Binary) -> String;
-    fn visitGroupingExpr(&self, expr: &Grouping) -> String;
-    fn visitLiteralExpr(&self, expr: &Literal) -> String;
-    fn visitUnaryExpr(&self, expr: &Unary) -> String;
+    fn visit_binary_expr(&self, expr: &Binary) -> String;
+    fn visit_grouping_expr(&self, expr: &Grouping) -> String;
+    fn visit_literal_expr(&self, expr: &Literal) -> String;
+    fn visit_unary_expr(&self, expr: &Unary) -> String;
 }
 
 pub struct Binary {
@@ -20,7 +20,7 @@ pub struct Binary {
 
 impl Expr for Binary {
     fn accept(&self, visitor: &AstPrinter) -> String {
-        return visitor.visitBinaryExpr(&self).to_string();
+        return visitor.visit_binary_expr(&self).to_string();
     }
 }
 
@@ -30,7 +30,7 @@ pub struct Grouping {
 
 impl Expr for Grouping {
     fn accept(&self, visitor: &AstPrinter) -> String {
-        return visitor.visitGroupingExpr(&self).to_string();
+        return visitor.visit_grouping_expr(&self).to_string();
     }
 }
 
@@ -40,7 +40,7 @@ pub struct Literal {
 
 impl Expr for Literal {
     fn accept(&self, visitor: &AstPrinter) -> String {
-        return visitor.visitLiteralExpr(&self).to_string();
+        return visitor.visit_literal_expr(&self).to_string();
     }
 }
 
@@ -51,6 +51,6 @@ pub struct Unary {
 
 impl Expr for Unary {
     fn accept(&self, visitor: &AstPrinter) -> String {
-        return visitor.visitUnaryExpr(&self).to_string();
+        return visitor.visit_unary_expr(&self).to_string();
     }
 }

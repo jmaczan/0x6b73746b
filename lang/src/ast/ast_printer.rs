@@ -3,23 +3,26 @@ use super::expression::{Binary, Expr, Grouping, Literal, Unary, Visitor};
 pub struct AstPrinter {}
 
 impl Visitor for AstPrinter {
-    fn visitBinaryExpr(&self, expr: &Binary) -> String {
-        self.parenthesize(expr.operator.lexeme.to_string(), vec![&expr.left, &expr.right])
+    fn visit_binary_expr(&self, expr: &Binary) -> String {
+        self.parenthesize(
+            expr.operator.lexeme.to_string(),
+            vec![&expr.left, &expr.right],
+        )
     }
 
-    fn visitGroupingExpr(&self, expr: &Grouping) -> String {
+    fn visit_grouping_expr(&self, expr: &Grouping) -> String {
         self.parenthesize("group".to_string(), vec![&expr.expression])
     }
 
-    fn visitLiteralExpr(&self, expr: &Literal) -> String {
+    fn visit_literal_expr(&self, expr: &Literal) -> String {
         if expr.value == "" {
-            return "nil".to_string()
+            return "nil".to_string();
         }
 
         expr.value.to_string()
     }
 
-    fn visitUnaryExpr(&self, expr: &Unary) -> String {
+    fn visit_unary_expr(&self, expr: &Unary) -> String {
         self.parenthesize(expr.operator.lexeme.to_string(), vec![&expr.right])
     }
 }
