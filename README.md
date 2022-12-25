@@ -112,6 +112,12 @@ the language's grammar consists of
 5. **binary**, which has infix operator, surrounded by expressions
 6. **operator**, which might be one of allowed operators for math and comparing
 
+**visitor pattern** is one of possible ways to traverse the AST. For each type of expression (binary, literal, unary, grouping, etc.) we implement the same interface which has a visitor's method, which takes a visitor as a param, i.e. `accept(visitor)` and invokes a proper method from Visitor interface, like visit_binary_expr when visiting binary expression etc. 
+
+**pretty-print** utilizes visitor pattern and each node (?) with `accept` method invokes a proper visitor's method which produces a `string`.
+
+**recursive descent parser** starts parsing the code from from highest level rules from lang's grammar (in case of this lang it's expression/equality) and recursively applies them until on bottom (in this case primary, like number, string, boolean, nil or expression in parenthesis)
+
 ## Author
 Notes is bunch of my notes from working through Robert Nystrom's "Crafting Interpreters" book and a result of searching through web to learn about programming languages and compilers and trying to explain those things in a written form
 
