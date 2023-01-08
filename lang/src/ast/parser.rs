@@ -12,11 +12,11 @@ impl Parser {
         Self { tokens, current: 0 }
     }
 
-    fn expression(&self) -> Box<dyn Expr> {
+    fn expression(&mut self) -> Box<dyn Expr> {
         Self::equality(self)
     }
 
-    fn equality(&self) -> Box<dyn Expr> {
+    fn equality(&mut self) -> Box<dyn Expr> {
         let mut expr = Self::comparison(self);
 
         while Self::match_token(
@@ -35,7 +35,7 @@ impl Parser {
         expr
     }
 
-    fn match_token(&self, tokens: Vec<TokenType>) -> bool {
+    fn match_token(&mut self, tokens: Vec<TokenType>) -> bool {
         for token in tokens {
             if Self::check(self, token) {
                 Self::advance(self);
@@ -54,7 +54,7 @@ impl Parser {
         Self::peek(self).token_type == token_type
     }
 
-    fn advance(&self) -> TokenType {
+    fn advance(&mut self) -> TokenType {
         if !Self::is_at_end(self) {
             self.current = self.current + 1;
         }
@@ -94,7 +94,7 @@ impl Parser {
         }
     }
 
-    fn comparison(&self) -> Box<dyn Expr> {
+    fn comparison(&mut self) -> Box<dyn Expr> {
         let mut expr = Self::term(self);
 
         while Self::match_token(
@@ -118,12 +118,12 @@ impl Parser {
         expr
     }
 
-    fn term(&self) -> Box<dyn Expr> {
+    fn term(&mut self) -> Box<dyn Expr> {
         let mut expr = Self::factor(self);
 
         while Self::match_token(self, Vec::from([TokenType::Minus, TokenType::Plus])) {
-            let operator = Self::previous(&self);
-            let right = Self::factor(&self);
+            let operator = Self::previous(self);
+            let right = Self::factor(self);
             expr = Box::new(Binary {
                 left: expr,
                 operator: operator.clone(),
@@ -134,12 +134,12 @@ impl Parser {
         expr
     }
 
-    fn factor(&self) -> Box<dyn Expr> {
-        let mut expr = Self::unary(&self);
+    fn factor(&mut self) -> Box<dyn Expr> {
+        let mut expr = Self::unary(self);
 
         while Self::match_token(self, Vec::from([TokenType::Slash, TokenType::Star])) {
-            let operator = Self::previous(&self);
-            let right = Self::unary(&self);
+            let operator = Self::previous(self);
+            let right = Self::unary(self);
             expr = Box::new(Binary {
                 left: expr,
                 operator: operator.clone(),
@@ -150,20 +150,20 @@ impl Parser {
         expr
     }
 
-    fn unary(&self) -> Box<dyn Expr> {
+    fn unary(&mut self) -> Box<dyn Expr> {
         if Self::match_token(self, Vec::from([TokenType::Bang, TokenType::Minus])) {
-            let operator = Self::previous(&self);
-            let right = Self::unary(&self);
+            let operator = Self::previous(self);
+            let right = Self::unary(self);
             return Box::new(Unary {
                 operator: operator.clone(),
                 right,
             });
         }
 
-        Self::primary(&self)
+        Self::primary(self)
     }
 
-    fn primary(&self) -> Box<dyn Expr> {
+    fn primary(&mut self) -> Box<dyn Expr> {
         if Self::match_token(self, Vec::from([TokenType::False])) {
             return Box::new(Literal {
                 value: "false".to_string(), // it's likely that I need to represent Literal in a different way than a String value
@@ -205,12 +205,12 @@ impl Parser {
         self.consume(
             TokenType::RightParen,
             "Expect ')' after expression.".to_string(),
-        );
+        ); // TODO use result of consume, especially if Err was returned
         return Box::new(Grouping { expression: expr });
         // }
     }
 
-    fn consume(&self, token_type: TokenType, message: String) -> Result<TokenType, ParseError> {
+    fn consume(&mut self, token_type: TokenType, message: String) -> Result<TokenType, ParseError> {
         if self.check(token_type) {
             return Ok(self.advance());
         }
