@@ -66,10 +66,10 @@ impl Parser {
         Self::peek(self).token_type == TokenType::Eof
     }
 
-    fn peek(&self) -> &Token {
+    fn peek(&self) -> Token {
         match self.tokens.get(self.current as usize) {
-            Some(token) => token,
-            None => &Token {
+            Some(token) => token.to_owned(),
+            None => Token {
                 // TODO - I might be wrong here and maybe either nothing should be returned or it should be a different value than Nil - likely Eof
                 token_type: TokenType::Nil, // Maybe TokenType::Eof
                 lexeme: "".to_string(),
@@ -80,10 +80,10 @@ impl Parser {
         }
     }
 
-    fn previous(&self) -> &Token {
+    fn previous(&self) -> Token {
         match self.tokens.get((self.current - 1) as usize) {
-            Some(token) => token,
-            None => &Token {
+            Some(token) => token.to_owned(),
+            None => Token {
                 // TODO - I might be wrong here and maybe either nothing should be returned or it should be a different value than Nil - likely Eof
                 token_type: TokenType::Nil,
                 lexeme: "".to_string(),
@@ -218,21 +218,17 @@ impl Parser {
         Err(self.error(self.peek(), message))
     }
 
-    fn error(&self, token: &Token, message: String) -> ParseError {
+    fn error(&self, token: Token, message: String) -> ParseError {
         if token.token_type == TokenType::Eof {
             self.report(token.line, " at end".to_string(), message.to_string());
         } else {
             self.report(token.line, format!(" at '{}'", token.lexeme), message);
         }
 
-        ParseError {  }
+        ParseError {}
     }
 
-    fn report(&self, line: u8, where_error: String, message: String) {
-
-    }
+    fn report(&self, line: u8, where_error: String, message: String) {}
 }
 
-struct ParseError {
-
-}
+struct ParseError {}
