@@ -1,6 +1,6 @@
 use crate::lexical_analysis::{Token, TokenType};
 
-use super::expression::{Binary, Expr, Literal, Unary};
+use super::expression::{Binary, Expr, Grouping, Literal, Unary};
 
 struct Parser {
     pub tokens: Vec<Token>,
@@ -135,7 +135,7 @@ impl Parser {
     }
 
     fn factor(&self) -> Box<dyn Expr> {
-        let expr = Self::unary(&self);
+        let mut expr = Self::unary(&self);
 
         while Self::match_token(self, Vec::from([TokenType::Slash, TokenType::Star])) {
             let operator = Self::previous(&self);
@@ -166,7 +166,7 @@ impl Parser {
     fn primary(&self) -> Box<dyn Expr> {
         if Self::match_token(self, Vec::from([TokenType::False])) {
             return Box::new(Literal {
-                value: "false".to_string(),
+                value: "false".to_string(), // it's likely that I need to represent Literal in a different way than a String value
             });
         }
 
@@ -178,8 +178,61 @@ impl Parser {
 
         if Self::match_token(self, Vec::from([TokenType::Nil])) {
             return Box::new(Literal {
-                value: "true".to_string(),
+                value: "nil".to_string(),
             });
         }
+
+        if Self::match_token(self, Vec::from([TokenType::Number, TokenType::String])) {
+            return Box::new(Literal {
+                value: self.previous().literal.clone(),
+            });
+        }
+
+        // TODO for super keyword
+        // if Self::match_token(self, Vec::from([TokenType::Super])) {
+        //     let keyword: &Token = self.previous();
+        //     self.consume(TokenType::Dot, "Expect '.' after 'super'.");
+        //     let method: &Token = self.consume(TokenType::Identifier, "Expect superclass method name.");
+        //     return Box::new(Literal {
+        //         value: self.previous().literal
+        //     });
+        // }
+
+        // TODO: Revert if; commented out to have all paths returning a value
+        // if Self::match_token(self, Vec::from([TokenType::LeftParen])) {
+        let expr = self.expression();
+
+        self.consume(
+            TokenType::RightParen,
+            "Expect ')' after expression.".to_string(),
+        );
+        return Box::new(Grouping { expression: expr });
+        // }
     }
+
+    fn consume(&self, token_type: TokenType, message: String) -> Result<TokenType, ParseError> {
+        if self.check(token_type) {
+            return Ok(self.advance());
+        }
+
+        Err(self.error(self.peek(), message))
+    }
+
+    fn error(&self, token: &Token, message: String) -> ParseError {
+        if token.token_type == TokenType::Eof {
+            self.report(token.line, " at end".to_string(), message.to_string());
+        } else {
+            self.report(token.line, format!(" at '{}'", token.lexeme), message);
+        }
+
+        ParseError {  }
+    }
+
+    fn report(&self, line: u8, where_error: String, message: String) {
+
+    }
+}
+
+struct ParseError {
+
 }

@@ -42,7 +42,7 @@ fn main() {
 
     let ast_printer = AstPrinter {};
 
-    println!("{}", ast_printer.print(Box::new(sample_expression)));
+    println!("Sample expression AST print: {}", ast_printer.print(Box::new(sample_expression)));
 
     match args.len() {
         0 | 1 => run_prompt(),
