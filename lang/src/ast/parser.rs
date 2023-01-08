@@ -1,6 +1,6 @@
 use crate::lexical_analysis::{Token, TokenType};
 
-use super::expression::{Binary, Expr, Grouping, Literal, Unary};
+use super::expression::{self, Binary, Expr, Grouping, Literal, Unary};
 
 struct Parser {
     pub tokens: Vec<Token>,
@@ -208,6 +208,8 @@ impl Parser {
         ); // TODO use result of consume, especially if Err was returned
         return Box::new(Grouping { expression: expr });
         // }
+
+        // Err(self.error(self.peek(), "Expect expression."))
     }
 
     fn consume(&mut self, token_type: TokenType, message: String) -> Result<TokenType, ParseError> {
@@ -229,6 +231,41 @@ impl Parser {
     }
 
     fn report(&self, line: u8, where_error: String, message: String) {}
+
+    fn synchronize(&mut self) {
+        self.advance();
+
+        loop {
+            if self.is_at_end() {
+                break;
+            }
+
+            if self.previous().token_type == TokenType::Semicolon {
+                break;
+            }
+
+            if [
+                TokenType::Class,
+                TokenType::Fun,
+                TokenType::Var,
+                TokenType::For,
+                TokenType::If,
+                TokenType::While,
+                TokenType::Print,
+                TokenType::Return,
+            ]
+            .contains(&self.peek().token_type)
+            {
+                break;
+            }
+
+            self.advance();
+        }
+    }
+
+    fn parse(&mut self) -> Box<dyn Expr> {
+        return self.expression(); // TODO handle Result from primary up to this place
+    }
 }
 
 struct ParseError {}
