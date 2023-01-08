@@ -4,6 +4,7 @@ use std::io::{stdin, stdout, Write};
 
 use crate::ast::ast_printer::AstPrinter;
 use crate::ast::generate_ast::generate_ast;
+use crate::ast::parser::Parser;
 use ast::expression::{Binary, Grouping, Literal, Unary};
 use lexical_analysis::{Lexer, Token, TokenType};
 
@@ -42,7 +43,10 @@ fn main() {
 
     let ast_printer = AstPrinter {};
 
-    println!("Sample expression AST print: {}", ast_printer.print(Box::new(sample_expression)));
+    println!(
+        "Sample expression AST print: {}",
+        ast_printer.print(Box::new(sample_expression))
+    );
 
     match args.len() {
         0 | 1 => run_prompt(),
@@ -61,7 +65,10 @@ fn run_file(path: &String) {
 fn run(source: String) {
     let mut lexer = Lexer::new(source);
     lexer.scan_tokens();
-    println!("{:?}", lexer.tokens);
+    let mut parser = Parser::new(lexer.tokens);
+    let expression = parser.parse();
+    let ast_printer = AstPrinter {};
+    println!("{:?}", ast_printer.print(expression));
 }
 
 fn run_prompt() {

@@ -1,8 +1,8 @@
 use crate::lexical_analysis::{Token, TokenType};
 
-use super::expression::{self, Binary, Expr, Grouping, Literal, Unary};
+use super::expression::{Binary, Expr, Grouping, Literal, Unary};
 
-struct Parser {
+pub struct Parser {
     pub tokens: Vec<Token>,
     pub current: u8,
 }
@@ -263,7 +263,7 @@ impl Parser {
         }
     }
 
-    fn parse(&mut self) -> Box<dyn Expr> {
+    pub fn parse(&mut self) -> Box<dyn Expr> {
         return self.expression(); // TODO handle Result from primary up to this place
     }
 }
