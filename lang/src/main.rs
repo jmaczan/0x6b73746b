@@ -65,6 +65,7 @@ fn run_file(path: &String) {
 fn run(source: String) {
     let mut lexer = Lexer::new(source);
     lexer.scan_tokens();
+    println!("Lexical analysis: {:?}", lexer.tokens);
     let mut parser = Parser::new(lexer.tokens);
     let expression = parser.parse();
     let ast_printer = AstPrinter {};
