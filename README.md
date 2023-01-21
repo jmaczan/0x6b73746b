@@ -2,7 +2,20 @@
 
 # The 0x6b73746b Programming Language
 
-Based on Robert Nystrom's "Crafting Interpreters" book https://craftinginterpreters.com/ and Lox Programming Language
+Partial tree-walk interpreter based on Robert Nystrom's "Crafting Interpreters" book https://craftinginterpreters.com/ and Lox Programming Language
+
+## Docs
+Directory `lang/src` contains source code of the interpreter. In order to run the interpreter, you need `cargo` installed. Obtain a copy of this repository by i.e. cloning it, go to `lang` folder and in a terminal type `cargo run`. If you want to have an executable file to distribute it, run `cargo build --release`. The output file `0x6b73746b` is present in `lang/target/release/` directory. To run it, invoke it in a terminal `./0x6b73746b`.
+
+The interpreter is written in Rust. It doesn't use any external crates. From the language's standard library, it uses `fs` for file system operations, `io` for handling standard input and output, `path` for cross-plaform path manipulation, `collections` for `HashMap` data structure and `env` to handle program arguments.
+
+This project is not finished. What has been already implemented is:
+1. Lexical analysis
+2. Abstract Syntax Tree
+3. Visitor pattern
+4. AST Prettyprint
+5. REPL
+6. Recursive Descent Parser with error handling - in progress
 
 ## Notes
 
