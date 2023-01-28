@@ -1,6 +1,6 @@
 <p align="center"><img width="150" src="0x6b73746b.png" alt="0x6b73746b"></p>
 
-# The 0x6b73746b Programming Language
+# 0x6b73746b
 
 Partial tree-walk interpreter based on Robert Nystrom's "Crafting Interpreters" book https://craftinginterpreters.com/ and Lox Programming Language
 
